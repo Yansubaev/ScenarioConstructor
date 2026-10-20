@@ -1,25 +1,29 @@
 # AGENTS.md
 
-Unity 6 (6000.6) project, URP, C#. A training-scenario constructor (test assignment): steps, run modes, logging and analysis are configured in the Unity Editor without code changes.
+Unity 6 (6000.6), URP, C#. A training-scenario constructor (test assignment). Steps, run modes, logging and analysis are configured in the Unity Editor with no code changes.
 
-- Task: `docs/task.md`
-- Architecture: `docs/architecture.md`
+- **Requirements**: `docs/task.md`. Read it before scoping or accepting any feature.
+- **Architecture plan**: `docs/architecture.md`. Read it before adding or changing a component, and update it when the design changes.
 
 ## Rules
 
-- **Do not commit or push** unless the user explicitly asks for it.
-- Keep it simple. Evaluation criterion: "the number of classes and patterns is not an advantage in itself". No speculative abstractions.
-- No third-party assets, plugins or packages; only built-in Unity features. Do not edit `Packages/manifest.json` without being asked.
-- Project documents go in `docs/` (except `README.md` and `AGENTS.md`). `docs/` is outside `Assets/`, so Unity does not create `.meta` files for it.
+- **Commit and push only when the user asks.**
+- **Minimal design**: build the fewest classes that meet `docs/task.md`. The grader states that "the number of classes and patterns is not an advantage in itself".
+- Use built-in Unity only. Third-party assets, plugins and packages are out; change `Packages/manifest.json` and `ProjectSettings/` only on request.
+- Project documents go in `docs/`.
 
-## Unity specifics
+## Unity
 
-- **Do not create, delete or edit `.meta` files by hand.** Unity generates them. When moving or renaming an asset, move its `.meta` too, otherwise GUIDs and references break.
-- Do not touch `Library/`, `Temp/`, `Logs/`, `UserSettings/`: they are generated and gitignored.
-- Do not edit `.unity`, `.prefab` or `.asset` (YAML) by hand without a good reason. It is easy to break references. Prefer describing the changes to make in the Editor, or use an Editor script.
-- Do not change `ProjectSettings/` without being asked.
-- Input: **Input System only** (`activeInputHandler: 1`). The legacy `UnityEngine.Input` does not work.
-- UI: uGUI (`com.unity.ugui`).
-- Code goes in `Assets/Scenario/` with asmdefs (Runtime / Editor / Tests). Editor code goes only in the Editor assembly.
-- Serialization: `[SerializeField] private` fields instead of public ones where external access is not needed. Do not rename serialized fields without `[FormerlySerializedAs]`, or data in scenes is lost.
-- Code cannot be compiled or tests run outside the Editor without Unity; say so honestly and ask the user to check in the Editor.
+- **`.meta` files belong to Unity.** Unity generates them; hand edits break GUIDs. When you move or rename an asset, move its `.meta` with it.
+- Make scene, prefab and `.asset` changes in the Editor: give the user steps or write an Editor script. Their YAML references break easily, so hand-edit them only with a clear reason.
+- **Input System only.** Legacy `UnityEngine.Input` throws in this project.
+- UI is uGUI.
+- Code lives in `Assets/Scenario/`, split into Runtime / Editor / Tests asmdefs. Anything that uses `UnityEditor` goes in the Editor assembly.
+- Use `[SerializeField] private` fields unless the field needs external access. Renaming a serialized field needs `[FormerlySerializedAs("oldName")]`, or scene data is lost.
+- Compiling and running tests happen in the Editor. End each code change by telling the user what to check there, and say plainly that it is unverified.
+
+## Agent skills
+
+- **Issue tracker**: GitHub Issues via `gh`. See `docs/agents/issue-tracker.md`.
+- **Triage labels**: the five defaults. See `docs/agents/triage-labels.md`.
+- **Domain docs**: single-context (`GLOSSARY.md` + `docs/adr/` at the root). See `docs/agents/domain.md`.
